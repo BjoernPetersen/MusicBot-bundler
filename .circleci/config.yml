@@ -39,6 +39,7 @@ jobs:
   update_lambda:
     executor: aws
     steps:
+      - checkout
       - run:
           command: zip -r bundle.zip main.py bundler
       - run:
