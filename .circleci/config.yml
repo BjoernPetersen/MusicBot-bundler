@@ -44,7 +44,7 @@ jobs:
           command: >
             aws lambda publish-layer-version
             --layer-name musicbot-bundler
-            --zip-file python.zip
+            --zip-file fileb://python.zip
             --compatible-runtimes python3.8
 
   update_lambda:
@@ -54,7 +54,11 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          command: aws lambda update-function-code --function-name musicbot-bundler --zip-file bundle.zip --publish
+          command: >
+            aws lambda update-function-code
+            --function-name musicbot-bundler
+            --zip-file fileb://bundle.zip
+            --publish
 
 workflows:
   main:
