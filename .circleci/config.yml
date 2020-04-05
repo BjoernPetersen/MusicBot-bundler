@@ -37,7 +37,7 @@ jobs:
   update_layer:
     executor: aws
     steps:
-      - run: yum update -y && yum install -y tar
+      - run: yum update -y && yum install -y tar gzip
       - attach_workspace:
           at: .
       - run:
@@ -50,7 +50,7 @@ jobs:
   update_lambda:
     executor: aws
     steps:
-      - run: yum update -y && yum install -y tar
+      - run: yum update -y && yum install -y tar gzip
       - attach_workspace:
           at: .
       - run:
