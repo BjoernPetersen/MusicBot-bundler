@@ -42,8 +42,9 @@ jobs:
           at: .
       - run:
           command: |
-            arn=aws lambda publish-layer-version --layer-name musicbot-bundler --zip-file fileb://python.zip --compatible-runtimes python3.8 --query 'LayerVersionArn'
+            arn=$(aws lambda publish-layer-version --layer-name musicbot-bundler --zip-file fileb://python.zip --compatible-runtimes python3.8 --query 'LayerVersionArn')
             aws lambda update-function-configuration --function-name musicbot-bundler --layers $ARN
+
   update_lambda:
     executor: aws
     steps:
