@@ -3,11 +3,10 @@ version: 2.1
 executors:
   python:
     docker:
-      - image: python:3.8
+      - image: circleci/python:3.8.2
   aws:
     docker:
       - image: amazon/aws-cli:latest
-
 
 jobs:
   python_setup:
@@ -24,6 +23,17 @@ jobs:
           paths:
             - python.zip
 
+  bundle_zip:
+    executor: python
+    steps:
+      - checkout
+      - run:
+          command: zip -r bundle.zip main.py bundler
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bundle.zip
+
   update_layer:
     executor: aws
     steps:
@@ -39,9 +49,8 @@ jobs:
   update_lambda:
     executor: aws
     steps:
-      - checkout
-      - run:
-          command: zip -r bundle.zip main.py bundler
+      - attach_workspace:
+          at: .
       - run:
           command: aws update-function-code --function-name musicbot-bundler --zip-file bundle.zip --publish
 
@@ -49,7 +58,10 @@ workflows:
   main:
     jobs:
       - python_setup
-      - update_lambda
+      - bundle_zip
+      - update_lambda:
+          requires:
+            - bundle_zip
       - update_layer:
           requires:
             - python_setup
