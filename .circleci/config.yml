@@ -1,0 +1,54 @@
+version: 2.1
+
+executors:
+  python:
+    docker:
+      - image: python:3.8
+  aws:
+    docker:
+      - image: amazon/aws-cli:latest
+
+
+jobs:
+  python_setup:
+    executor: python
+    steps:
+      - checkout
+      # TODO: install requirements without boto3
+      - run:
+          command: pip install -r requests -t python
+      - run:
+          command: zip -r python.zip python
+      - persist_to_workspace:
+          root: .
+          paths:
+            - python.zip
+
+  update_layer:
+    executor: aws
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          command: >
+            aws publish-layer-version
+            --layer-name musicbot-bundler
+            --zip-file python.zip
+            --compatible-runtimes python3.8
+
+  update_lambda:
+    executor: aws
+    steps:
+      - run:
+          command: zip -r bundle.zip main.py bundler
+      - run:
+          command: aws update-function-code --function-name musicbot-bundler --zip-file bundle.zip --publish
+
+workflows:
+  main:
+    jobs:
+      - python_setup
+      - update_lambda
+      - update_layer:
+          requires:
+            - python_setup

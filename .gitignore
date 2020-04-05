@@ -1,0 +1,6 @@
+python/
+venv/
+*.zip
+*.pyc
+.idea/
+*.iml
