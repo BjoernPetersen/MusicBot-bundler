@@ -46,6 +46,7 @@ jobs:
             --layer-name musicbot-bundler
             --zip-file fileb://python.zip
             --compatible-runtimes python3.8
+            --quiet
 
   update_lambda:
     executor: aws
@@ -59,6 +60,7 @@ jobs:
             --function-name musicbot-bundler
             --zip-file fileb://bundle.zip
             --publish
+            --quiet
 
 workflows:
   main:
