@@ -16,7 +16,7 @@ jobs:
       - checkout
       # TODO: install requirements without boto3
       - run:
-          command: pip install -r requests -t python
+          command: pip install requests -t python
       - run:
           command: zip -r python.zip python
       - persist_to_workspace:
